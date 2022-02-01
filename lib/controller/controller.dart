@@ -8,10 +8,13 @@ import '../Model/model.dart';
 import 'package:http/http.dart' as http;
 
 class Controller {
-  final String uri = "https://api.nasa.gov/planetary/apod?api_key=YQGdIgGdV8CILRe8h7maeXfFz6Ad6bgzGOb9ZNNk&count=5";
+  final String uri = "https://api.nasa.gov/planetary/apod?api_key=YQGdIgGdV8CILRe8h7maeXfFz6Ad6bgzGOb9ZNNk&start_date=2022-01-01&end_date=2022-02-01";
 
 
   Future <List<Nasa>> fetchNasa() async {
+    var test = await getjson();
+     if(test == []){
+
 
     var response = await http.get(uri);
     if (response.statusCode == 200) {
@@ -30,7 +33,15 @@ class Controller {
         print(jsonList1.toString());
         return jsonList1.map((json) => Nasa.fromJson(json)).toList();
       }
-    }
+    }}
+     else{
+       List<dynamic> jsonList1 = [];
+       jsonList1 = await getjson();
+       if (jsonList1 is List) {
+         print(jsonList1.toString());
+         return jsonList1.map((json) => Nasa.fromJson(json)).toList();
+       }
+     }
     throw Exception("http call not made");
   }
 
@@ -50,8 +61,6 @@ class Controller {
   Future <List<Nasa>> RechNasa() async {
     final prefs = await SharedPreferences.getInstance();
 
-    var response = await http.get(uri);
-    if (response.statusCode == 200) {
       var jsonList = await getjson();
       List<dynamic> jsonList1 =[];
       String txt =  (await prefs.getString('search')).toString();
@@ -68,10 +77,6 @@ class Controller {
 
       return jsonList1.map((json) => Nasa.fromJson(json)).toList();
 
-    }
-
-
-    throw Exception("http call not made");
 
   }
 
